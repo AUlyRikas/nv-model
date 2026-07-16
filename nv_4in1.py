@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-nv_4in1.py —— 四合一集成投票引擎（最终版）
+nv_4in1.py —— 四合一集成投票引擎（最终版·集成MAX）
 ============================================================
 模型构成：
   M1  (nv_m1.py)        — 外部锚点规律 + 不等权投票 + F5微调
   P54 (nv_p54.py)       — 54条围肖信号等权投票 + 冷号优先
   R96 (nv_r96.py)       — 规则库反向杀肖评分（仅提供金标安全分）
+  MAX (nv_max.py)       — 基于规则库的反向安全投票（硬排除高风险生肖）
 
 集成机制：
-  1. 三个子模型各输出9肖
+  1. 四个子模型各输出9肖
   2. 等权投票 + 非线性排名得分（前3=9分/4-6=3分/7-9=1分）
+     M1权重1.0, P54权重1.0, R96权重1.0, MAX权重1.5
   3. 金标安全分：双锚点+三锚点规则库联合计算
   4. 非线性惩罚：被杀≥2次的生肖，安全分×3
 
@@ -21,9 +23,21 @@ nv_4in1.py —— 四合一集成投票引擎（最终版）
   四肖：票数 → 惩罚安全分(升序) → 遗漏值（独立排序）
   三肖：票数 → 惩罚安全分(升序) → 遗漏值（独立排序）
 
+当前模型数据:
+  总期数: 2247
+  === 集成回测（样本外 2001~2247） ===
+  9肖: 命中率 96.75% | 最大连错 1期 | 连错分布 {1: 8}
+  6肖: 命中率 88.62% | 最大连错 2期 | 连错分布 {1: 20, 2: 4}
+  5肖: 命中率 80.49% | 最大连错 4期 | 连错分布 {1: 30, 2: 4, 3: 2, 4: 1}
+  4肖: 命中率 73.58% | 最大连错 4期 | 连错分布 {1: 25, 2: 12, 3: 4, 4: 1}
+  3肖: 命中率 69.11% | 最大连错 4期 | 连错分布 {1: 28, 2: 14, 3: 4, 4: 2}
+  7尾:  命中率 86.59% | 最大连错 2期 | 连错分布 {1: 27, 2: 3}
+  16码: 命中率 75.20% | 最大连错 4期 | 连错分布 {1: 31, 2: 10, 3: 2, 4: 1}
+
 新增功能：
   - 优化版7尾：基于三肖尾数频次 + 近5期热尾，每期动态生成
   - 16码生成：沿用旧版V5.1逻辑（三肖强制入选 + 六肖补齐）
+  - MAX模块：权重1.5，阈值2，六肖连错降至2期
 
 用法：
   python nv_4in1.py          → 屏幕预测
@@ -50,6 +64,7 @@ from shuju_loader import load_all_data
 from nv_m1 import predict_m1
 from nv_p54 import predict_p54
 from nv_r96 import predict_r96, load_rulebase
+from nv_max import predict_max  # ← 新增MAX模块
 
 ZODIAC = SHENGXIAO
 POS_NAMES = ["平一", "平二", "平三", "平四", "平五", "平六", "特码"]
@@ -220,15 +235,20 @@ def old_16code(records, idx, six_sx, three_sx, anchor_sx):
 
 
 def ensemble_predict(records, rules_gold=None, rules_3anchor=None):
+    """集成预测主函数，返回九肖、六肖、五肖、四肖、三肖"""
     if len(records) < 2:
         return [], [], [], [], []
     if rules_gold is None:
         rules_gold = load_rulebase("nv_双锚点规则库.json")
     if rules_3anchor is None:
         rules_3anchor = load_rulebase("nv_三锚点规则库.json")
+
+    # 获取四个子模型的预测
     m1_nine, _, _ = predict_m1(records)
     p54_nine, _, _ = predict_p54(records)
     r96_nine, _, _ = predict_r96(records, rules_gold, rules_3anchor)
+    max_nine = predict_max(records[-1], rules_gold, rules_3anchor)  # MAX 模块（默认阈值2）
+
     idx = len(records)
     missing = {}
     for s in ZODIAC:
@@ -239,46 +259,63 @@ def ensemble_predict(records, rules_gold=None, rules_3anchor=None):
             else:
                 break
         missing[s] = streak
+
     def fill(nine):
         return nine if nine else sorted(ZODIAC, key=lambda x: missing.get(x, 0), reverse=True)[:9]
+
     m1_nine = fill(m1_nine)
     p54_nine = fill(p54_nine)
     r96_nine = fill(r96_nine)
+    # MAX 不需要填充，它始终返回完整的九肖列表
+
     rank_scores = Counter()
     votes = Counter()
-    for nine in [m1_nine, p54_nine, r96_nine]:
+    # 四个模型等权投票，MAX 权重 1.5（经内部验证最优）
+    for nine, w in [(m1_nine, 1.0), (p54_nine, 1.0), (r96_nine, 1.0), (max_nine, 1.5)]:
         for rank, s in enumerate(nine):
             if rank < 3:
-                rank_scores[s] += 9
+                rank_scores[s] += 9 * w
             elif rank < 6:
-                rank_scores[s] += 3
+                rank_scores[s] += 3 * w
             else:
-                rank_scores[s] += 1
-            votes[s] += 1
+                rank_scores[s] += 1 * w
+            votes[s] += w
+
     prev = records[-1]
     raw_safety = compute_gold_safety(prev, rules_gold, rules_3anchor)
     pen_safety = penalize_safety(raw_safety, threshold=2, factor=3)
+
+    # 九肖
     nine_ranked = sorted(votes.items(), key=lambda x: (
         -x[1], -rank_scores.get(x[0], 0), -missing.get(x[0], 0)
     ))
     nine_sx = [s for s, _ in nine_ranked[:9]]
+
+    # 六肖
     six_ranked = sorted(votes.items(), key=lambda x: (
         -x[1], -rank_scores.get(x[0], 0),
         raw_safety.get(x[0], 99), -missing.get(x[0], 0)
     ))
     six_sx = [s for s, _ in six_ranked[:6]]
+
+    # 五肖独立
     five_ranked = sorted(votes.items(), key=lambda x: (
         -x[1], pen_safety.get(x[0], 99), -missing.get(x[0], 0)
     ))
     five_sx = [s for s, _ in five_ranked[:5]]
+
+    # 四肖独立
     four_ranked = sorted(votes.items(), key=lambda x: (
         -x[1], pen_safety.get(x[0], 99), -missing.get(x[0], 0)
     ))
     four_sx = [s for s, _ in four_ranked[:4]]
+
+    # 三肖独立
     three_ranked = sorted(votes.items(), key=lambda x: (
         -x[1], pen_safety.get(x[0], 99), -missing.get(x[0], 0)
     ))
     three_sx = [s for s, _ in three_ranked[:3]]
+
     return nine_sx, six_sx, five_sx, four_sx, three_sx
 
 
