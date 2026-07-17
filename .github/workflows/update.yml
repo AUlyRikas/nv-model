@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pages: write
+      id-token: write
 
     steps:
       - name: 检出代码
@@ -28,14 +30,18 @@ jobs:
       - name: 运行预测模型
         run: python nv_4in1.py --output
 
-      - name: 更新时间戳到 nv.html
-        run: |
-          echo "<!-- updated: $(date -u) -->" >> nv.html
-
-      - name: 提交更新
+      - name: 提交更新到仓库
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add ensemble_data_v6.js nv.html
           git diff --staged --quiet || git commit -m "自动更新预测数据"
           git push
+
+      - name: 部署到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          publish_branch: gh-pages
+          force_orphan: true
