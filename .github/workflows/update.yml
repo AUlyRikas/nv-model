@@ -7,7 +7,7 @@ on:
   workflow_dispatch:   # 允许手动触发
 
 permissions:
-  contents: write      # 允许推送更新到仓库
+  contents: write      # 关键：必须允许写回仓库
 
 jobs:
   update-data:
@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true   # 确保 push 权限
 
       - name: 设置 Python
         uses: actions/setup-python@v5
