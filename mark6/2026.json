@@ -4776,7 +4776,51 @@
       "vs": null,
       "verify": false,
       "info": "macaujc.com 接口數據來源、邮件技術支持：service@macaujc.com"
+    },
+    {
+      "suit": null,
+      "expect": "2026218",
+      "openTime": "2026-08-06 21:32:32",
+      "type": "8",
+      "openCode": "02,13,47,38,46,23,17",
+      "wave": "red,red,blue,green,red,red,green",
+      "zodiac": "蛇,马,猴,蛇,鸡,猴,虎",
+      "oddEven": null,
+      "allOddEven": null,
+      "bigSmall": null,
+      "allBigSmall": null,
+      "firstsecend": 0,
+      "left3": null,
+      "mid3": null,
+      "right3": null,
+      "pet": null,
+      "pk": null,
+      "vs": null,
+      "verify": false,
+      "info": "macaujc.com 接口數據來源、邮件技術支持：service@macaujc.com"
+    },
+    {
+      "suit": null,
+      "expect": "2026219",
+      "openTime": "2026-08-07 21:32:32",
+      "type": "8",
+      "openCode": "31,41,07,08,29,22,43",
+      "wave": "blue,blue,red,red,red,green,green",
+      "zodiac": "鼠,虎,鼠,猪,虎,鸡,鼠",
+      "oddEven": null,
+      "allOddEven": null,
+      "bigSmall": null,
+      "allBigSmall": null,
+      "firstsecend": 0,
+      "left3": null,
+      "mid3": null,
+      "right3": null,
+      "pet": null,
+      "pk": null,
+      "vs": null,
+      "verify": false,
+      "info": "macaujc.com 接口數據來源、邮件技術支持：service@macaujc.com"
     }
   ],
-  "timestamp": 1785949431767
+  "timestamp": 1786119898001
 }
