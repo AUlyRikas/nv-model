@@ -5722,7 +5722,29 @@
       "vs": null,
       "verify": false,
       "info": "macaujc.com 接口數據來源、邮件技術支持：service@macaujc.com"
+    },
+    {
+      "suit": null,
+      "expect": "2026261",
+      "openTime": "2026-09-18 21:32:32",
+      "type": "8",
+      "openCode": "06,25,43,46,29,47,24",
+      "wave": "green,blue,green,red,red,blue,red",
+      "zodiac": "牛,马,鼠,鸡,虎,猴,羊",
+      "oddEven": null,
+      "allOddEven": null,
+      "bigSmall": null,
+      "allBigSmall": null,
+      "firstsecend": 0,
+      "left3": null,
+      "mid3": null,
+      "right3": null,
+      "pet": null,
+      "pk": null,
+      "vs": null,
+      "verify": false,
+      "info": "macaujc.com 接口數據來源、邮件技術支持：service@macaujc.com"
     }
   ],
-  "timestamp": 1789672234203
+  "timestamp": 1789756581061
 }
