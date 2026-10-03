@@ -6052,7 +6052,29 @@
       "vs": null,
       "verify": false,
       "info": "macaujc.com 接口數據來源、邮件技術支持：service@macaujc.com"
+    },
+    {
+      "suit": null,
+      "expect": "2026276",
+      "openTime": "2026-10-03 21:32:32",
+      "type": "8",
+      "openCode": "02,21,17,40,11,24,14",
+      "wave": "red,green,green,red,green,red,blue",
+      "zodiac": "蛇,狗,虎,兔,猴,羊,蛇",
+      "oddEven": null,
+      "allOddEven": null,
+      "bigSmall": null,
+      "allBigSmall": null,
+      "firstsecend": 0,
+      "left3": null,
+      "mid3": null,
+      "right3": null,
+      "pet": null,
+      "pk": null,
+      "vs": null,
+      "verify": false,
+      "info": "macaujc.com 接口數據來源、邮件技術支持：service@macaujc.com"
     }
   ],
-  "timestamp": 1790971532130
+  "timestamp": 1791053273173
 }
