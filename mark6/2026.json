@@ -6580,7 +6580,29 @@
       "vs": null,
       "verify": false,
       "info": "macaujc.com 接口數據來源、邮件技術支持：service@macaujc.com"
+    },
+    {
+      "suit": null,
+      "expect": "2026300",
+      "openTime": "2026-10-27 21:32:32",
+      "type": "8",
+      "openCode": "01,29,23,17,18,42,38",
+      "wave": "red,red,red,green,red,blue,green",
+      "zodiac": "马,虎,猴,虎,牛,牛,蛇",
+      "oddEven": null,
+      "allOddEven": null,
+      "bigSmall": null,
+      "allBigSmall": null,
+      "firstsecend": 0,
+      "left3": null,
+      "mid3": null,
+      "right3": null,
+      "pet": null,
+      "pk": null,
+      "vs": null,
+      "verify": false,
+      "info": "macaujc.com 接口數據來源、邮件技術支持：service@macaujc.com"
     }
   ],
-  "timestamp": 1793047236046
+  "timestamp": 1793131879619
 }
