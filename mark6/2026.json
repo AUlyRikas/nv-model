@@ -7042,7 +7042,29 @@
       "vs": null,
       "verify": false,
       "info": "macaujc.com 接口數據來源、邮件技術支持：service@macaujc.com"
+    },
+    {
+      "suit": null,
+      "expect": "2026321",
+      "openTime": "2026-11-18 21:32:32",
+      "type": "8",
+      "openCode": "15,45,23,08,47,49,41",
+      "wave": "blue,red,red,red,blue,green,blue",
+      "zodiac": "龙,狗,猴,猪,猴,马,虎",
+      "oddEven": null,
+      "allOddEven": null,
+      "bigSmall": null,
+      "allBigSmall": null,
+      "firstsecend": 0,
+      "left3": null,
+      "mid3": null,
+      "right3": null,
+      "pet": null,
+      "pk": null,
+      "vs": null,
+      "verify": false,
+      "info": "macaujc.com 接口數據來源、邮件技術支持：service@macaujc.com"
     }
   ],
-  "timestamp": 1794872868949
+  "timestamp": 1794956629433
 }
